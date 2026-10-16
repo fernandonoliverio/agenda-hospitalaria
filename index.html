@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hospi Agenda Clínica</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="loginScreen" class="auth-overlay active">
+      <div class="auth-card">
+        <div class="auth-badge">Hospi</div>
+        <h1>Agenda Citogénetica</h1>
+        <p>Iniciá sesión para gestionar turnos y pacientes.</p>
+
+        <form id="loginForm" class="auth-form">
+          <label>
+            <span>Usuario</span>
+            <input type="text" id="username" required />
+          </label>
+          <label>
+            <span>Contraseña</span>
+            <input type="password" id="password" required />
+          </label>
+          <button type="submit" class="primary-button full-width">Ingresar</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="appShell" class="app-shell hidden">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-logo">H</div>
+          <div>
+            <small>Gestión</small>
+            <h2>Hospi</h2>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <button class="nav-link active" type="button" data-view="agenda">Agenda</button>
+          <button class="nav-link" type="button" data-view="patients">Pacientes</button>
+          <button class="nav-link" type="button" data-view="reports">Pedido médico</button>
+        </nav>
+
+        <div class="sidebar-card">
+          <span>Próximo turno</span>
+          <strong id="nextAppointmentLabel">--</strong>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Panel principal</p>
+            <h1>Agenda Citogénetica</h1>
+          </div>
+          <div class="topbar-actions">
+            <button id="newTurnBtn" class="primary-button" type="button">Nuevo turno</button>
+            <button id="restorePatientsBtn" class="restore-button" type="button">Restaurar pacientes</button>
+            <button id="backupBtn" class="ghost-button" type="button">Backup</button>
+            <button id="restoreBackupBtn" class="ghost-button" type="button">Restore</button>
+            <button id="sendRemindersBtn" class="ghost-button" type="button">Enviar recordatorios</button>
+            <button id="importCsvBtn" class="ghost-button" type="button">Importar CSV</button>
+            <button id="exportCsvBtn" class="ghost-button" type="button">Exportar CSV</button>
+            <button id="exportJsonBtn" class="ghost-button" type="button">Exportar JSON</button>
+            <button id="clearAllBtn" class="ghost-button danger" type="button">Vaciar agenda</button>
+            <button id="logoutBtn" class="ghost-button" type="button">Cerrar sesión</button>
+          </div>
+        </header>
+
+        <section class="dashboard-grid">
+          <article class="stat-card accent-blue">
+            <small>Total</small>
+            <strong id="totalPatientsStat">0</strong>
+            <span>pacientes</span>
+          </article>
+          <article class="stat-card accent-green">
+            <small>Hoy</small>
+            <strong id="todayPatientsStat">0</strong>
+            <span>turnos</span>
+          </article>
+          <article class="stat-card accent-purple">
+            <small>Recordatorios</small>
+            <strong id="remindersStat">0</strong>
+            <span>pendientes</span>
+          </article>
+          <article class="stat-card accent-orange">
+            <small>Pedido médico</small>
+            <strong id="filesStat">0</strong>
+            <span>adjuntos</span>
+          </article>
+        </section>
+
+        <section class="main-grid">
+          <div id="formPanel" class="panel form-panel hidden">
+            <div class="panel-header">
+              <h2>Nuevo turno</h2>
+              <div class="selected-date-wrap">
+                <span>Fecha seleccionada</span>
+                <strong id="selectedDateLabel">--</strong>
+              </div>
+            </div>
+
+            <form id="patientForm">
+              <div class="two-columns">
+                <label>
+                  <span>Nombre</span>
+                  <input type="text" name="nombre" required />
+                </label>
+                <label>
+                  <span>Apellido</span>
+                  <input type="text" name="apellido" required />
+                </label>
+              </div>
+
+              <div class="two-columns">
+                <label>
+                  <span>Número de documento</span>
+                  <input type="text" name="documento" required />
+                </label>
+                <label>
+                  <span>Obra social</span>
+                  <input type="text" name="obraSocial" placeholder="Ej: OSDE" />
+                </label>
+              </div>
+
+              <div class="two-columns">
+                <label>
+                  <span>Diagnóstico</span>
+                  <input type="text" name="diagnostico" required />
+                </label>
+                <label>
+                  <span>Médico solicitante</span>
+                  <input type="text" name="medico" required />
+                </label>
+              </div>
+
+              <div class="two-columns">
+                <label>
+                  <span>Teléfono</span>
+                  <input type="tel" name="telefono" required />
+                </label>
+                <label>
+                  <span>Mail</span>
+                  <input type="email" name="mail" required />
+                </label>
+              </div>
+
+              <div class="two-columns">
+                <label>
+                  <span>Fecha de nacimiento</span>
+                  <input type="date" name="fechaNacimiento" />
+                </label>
+                <label>
+                  <span>Fecha del turno</span>
+                  <input type="date" name="fechaTurno" required />
+                </label>
+              </div>
+
+              <div class="two-columns">
+                <label>
+                  <span>Hora del turno</span>
+                  <input type="time" name="horaTurno" required />
+                </label>
+                <div></div>
+              </div>
+
+              <label>
+                <span>Observaciones</span>
+                <textarea name="observaciones" rows="4" placeholder="Escriba observaciones relevantes..."></textarea>
+              </label>
+
+              <label>
+                <span>Adjuntar pedido médico (.doc, .docx, .pdf)</span>
+                <input type="file" name="archivos" accept=".doc,.docx,.pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf" multiple />
+              </label>
+
+              <div class="reminder-options">
+                <h3>Recordatorios</h3>
+                <div class="toggle-row">
+                  <label class="checkbox-wrap">
+                    <input type="checkbox" name="recordatorioWsp" checked />
+                    <span>WhatsApp</span>
+                  </label>
+                  <label class="checkbox-wrap">
+                    <input type="checkbox" name="recordatorioMail" checked />
+                    <span>Email</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button class="primary-button full-width" type="submit">Guardar turno</button>
+                <button id="cancelEditBtn" class="ghost-button full-width hidden" type="button">Cancelar edición</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel agenda-panel">
+            <div class="panel-header with-search">
+              <h2 id="panelTitle">Agenda</h2>
+              <div class="agenda-toolbar">
+                <input id="searchInput" type="search" placeholder="Buscar paciente, diagnóstico o DNI" />
+                <select id="doctorFilter" class="filter-select">
+                  <option value="all">Todos los médicos</option>
+                </select>
+                <select id="statusFilter" class="filter-select">
+                  <option value="all">Todos</option>
+                  <option value="today">Hoy</option>
+                  <option value="week">Próxima semana</option>
+                  <option value="month">Este mes</option>
+                  <option value="range-7">Próximos 7 días</option>
+                  <option value="range-30">Próximos 30 días</option>
+                  <option value="past">Anteriores</option>
+                  <option value="reminders">Con recordatorio</option>
+                  <option value="without-reminders">Sin recordatorio</option>
+                </select>
+                <select id="patientsStatusFilter" class="filter-select hidden">
+                  <option value="all">Todos</option>
+                  <option value="today">Hoy</option>
+                  <option value="week">Próxima semana</option>
+                  <option value="month">Este mes</option>
+                  <option value="range-7">Próximos 7 días</option>
+                  <option value="range-30">Próximos 30 días</option>
+                  <option value="past">Anteriores</option>
+                  <option value="reminders">Con recordatorio</option>
+                  <option value="without-reminders">Sin recordatorio</option>
+                </select>
+                <label class="advanced-filter-inline">
+                  <span>Fecha</span>
+                  <input id="dateFilterInput" type="date" />
+                </label>
+              </div>
+            </div>
+
+            <div class="month-calendar-header">
+              <button id="prevMonthBtn" class="ghost-button small" type="button">‹</button>
+              <h3 id="monthTitle">Mes actual</h3>
+              <button id="nextMonthBtn" class="ghost-button small" type="button">›</button>
+            </div>
+            <div id="monthCalendar" class="month-calendar" aria-live="polite"></div>
+            <div id="agendaList" class="agenda-list" aria-live="polite"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="patientHistoryModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="patientHistoryTitle">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow small">Historial clínico</p>
+            <h3 id="patientHistoryTitle">Paciente</h3>
+          </div>
+          <button id="historyCloseBtn" class="ghost-button small" type="button" aria-label="Cerrar historial">×</button>
+        </div>
+        <div id="patientHistoryContent" class="history-content"></div>
+      </div>
+    </div>
+
+    <div id="deletedPatientsModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="deletedPatientsTitle">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow small">Recuperación</p>
+            <h3 id="deletedPatientsTitle">Pacientes eliminados</h3>
+          </div>
+          <button id="deletedPatientsCloseBtn" class="ghost-button small" type="button" aria-label="Cerrar recuperar pacientes">×</button>
+        </div>
+        <div id="deletedPatientsContent" class="restore-content"></div>
+      </div>
+    </div>
+
+    <input id="importCsvInput" type="file" accept=".csv,text/csv" hidden />
+    <input id="backupInput" type="file" accept=".json,application/json" hidden />
+
+    <script src="app.js"></script>
+  </body>
+</html>
